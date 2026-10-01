@@ -55,3 +55,28 @@ Sa loi : il déplace sa propre chaleur par contact, il ne crée pas de flamme. P
 - Commande d'entraînement prête : `lora/entrainer.bat` (à copier sur le PC fixe), environ 1 h 30 à 2 h.
 - **Bloqué** : l'installation de l'outil d'entraînement (github.com/kohya-ss/sd-scripts, avec ses dépendances Python) a été refusée par le garde-fou de sécurité, qui demande un accord explicite pour ce code externe.
 - Premier essai à prendre comme tel : les images d'entraînement sont elles-mêmes générées, avec leurs défauts (visages flous). Le vrai module viendra quand 15 à 20 sprites auront été retouchés et validés.
+
+## 1er octobre, matin : dépôt atelier, direction révisée, pose commune
+
+**Direction (décision 11 révisée, voir la passation du jeu).** Grimgar pour les décors, la lumière et la palette ; Shadow Slave pour les sujets, le bestiaire, les boss et la nuit ; les personnages font le pont. Constat : le pastel de Grimgar vit dans ses décors à l'aquarelle, pas dans ses personnages ; un sprite de 60 px ne peut le porter que par la palette. Les images des deux œuvres peuvent servir de références de travail (hors de git).
+
+**Sur le PC fixe.** Les scripts vivent maintenant dans `C:\Users\abdou\exil-atelier\images` (copie par scp, pas un clone git : le PC fixe n'a pas d'accès au dépôt privé). L'ancien dossier `C:\Users\abdou\exil-essais` contient les lots de la nuit.
+
+**Poids ajoutés** (accord d'Abdallah) dans `ComfyUI\models` :
+- `controlnet\controlnet-union-sdxl-promax.safetensors` (xinsir/controlnet-union-sdxl-1.0) ;
+- `ipadapter\ip-adapter-plus_sdxl_vit-h.safetensors` et `clip_vision\CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` (h94/IP-Adapter).
+
+**ControlNet : marche, sans rien installer** (nœuds natifs de ComfyUI). `gabarit.py` dessine un squelette de pose au format OpenPose ; `generer.py --pose gabarit-debout.png` y pose le personnage (force 0,7, jusqu'à 70 % des étapes). `lot.py` produit un lot complet et sa planche. Résultat : `essais/2026-10-01-pose/planche.png`, 18 sprites de même posture, même taille, même cadrage. C'est la base des calques de cosmétiques.
+
+**Bloqué par le garde-fou** (code externe, même avec l'accord d'Abdallah ; il doit lancer les commandes lui-même sur le PC fixe ou ajouter une règle de permission) :
+1. IP-Adapter : les nœuds `ComfyUI_IPAdapter_plus` (github.com/cubiq/ComfyUI_IPAdapter_plus) à cloner dans `ComfyUI\custom_nodes`. Les poids sont déjà là.
+2. LoRA : `kohya-ss/sd-scripts` dans `C:\Users\abdou\sd-scripts` avec son venv (torch cu128, requirements, bitsandbytes). Jeu d'entraînement et commande prêts (`lora/`).
+3. Mitsuba (essai borné voulu par Abdallah) : fork `PrismML-Eng/llama.cpp`, branche `prism`, à compiler (cmake, compilateur C++, CUDA) ; fichiers `Mitsuba-ComfyUI-27B-v1.18-PQ2_0.gguf` (7,3 Go) et `mmproj-Q8_0.gguf` sur huggingface.co/isichan-ai/Mitsuba-ComfyUI-27B-GGUF ; `--reasoning off`, température 0,6. Annoncé pour 16 Go : à décharger avant chaque génération sur la 3060.
+
+**Suite prévue, dans l'ordre.**
+1. Abdallah dépose ses références dans `references/grimgar` et `references/shadow-slave`.
+2. Planche de référence du mélange : un décor de jour, un décor de nuit, un personnage, une créature. À valider avant toute série.
+3. IP-Adapter avec ces références, puis comparaison de deux ou trois modèles de base (SDXL de base suit mal les prompts).
+4. Essai borné de Mitsuba : la même référence décrite par Mitsuba et par Claude, générations côte à côte.
+5. LoRA quand 15 à 20 sprites sont retouchés et validés.
+6. Retouches à refaire sur les sprites à pose commune (les coordonnées de `retouches.py` valent pour le lot de la nuit).
