@@ -1,0 +1,11 @@
+# Poids de modèles : jamais dans git
+*.safetensors
+*.gguf
+*.ckpt
+# Images brutes sorties du modèle (seuls les essais triés sont gardés)
+brut*/
+# Références tirées d'œuvres existantes : outils de travail, pas à nous de les diffuser
+images/references/*
+!images/references/LISEZMOI.md
+__pycache__/
+venv/
